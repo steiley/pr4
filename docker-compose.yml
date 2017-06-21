@@ -1,0 +1,35 @@
+version: "2"
+
+services:
+
+  #
+  # メインコンテナ
+  #
+  web:
+    build:
+      context: .
+
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+
+    environment:
+      RAILS_ENV: development
+
+    command: rails s -b 0.0.0.0 -p 3000
+
+  # js:
+  #   build:
+  #     context: .
+  #
+  #   volumes:
+  #     - .:/app
+  #
+  #   ports:
+  #     - "8080:8080"
+  #
+  #   environment:
+  #     RAILS_ENV: development
+  #
+  #   command: bin/webpack-dev-server --host 0.0.0.0

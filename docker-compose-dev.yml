@@ -1,0 +1,10 @@
+version: '2'
+
+volumes:
+  pan_src:
+    external: true
+
+services:
+  web:
+    volumes:
+      - pan_src:/app:rw
