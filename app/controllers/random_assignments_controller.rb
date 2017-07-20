@@ -3,53 +3,62 @@ class RandomAssignmentsController < ApplicationController
     payload = JSON.parse(request.body.read)
     head :success unless %w(open reopen).include?(payload["action"])
 
-    repository_owner = payload["repository"]["owner"]["login"]
-    pr_owner = payload["pull_request"]["user"]["login"]
+    pr_user_login = payload["pull_request"]["user"]["login"]
     http = GraphQL::Client::HTTP.new("https://api.github.com/graphql")do
-      attr_writer :token
+      attr_writer :tokenid
 
       def headers(_context)
-         { Token: @token  }
+        {
+         Authorization: "token #{@token}",
+         Accept: "application/vnd.github.machine-man-preview+json"
+        }
       end
     end
-    http.token = JSON.parse(AuthenticateService.perform(payload["installation"]["id"]))["token"]
+    http.token = AuthenticateService.perform(payload["installation"]["id"])
 
-    client = GraphQL::Client.new(schema: "db/schema.json", execute: http)
-    result = client.query(client.parse(<<-QUERY))
+    pr_user_id = http.execute(<<-USER)["data"]["user"]["id"]
+    query {
+      user(login: "#{pr_user_login}") {
+        id
+      }
+    }
+    USER
+
+    result = http.execute(document: <<-QUERY)
          query {
-           repository(owner: "#{repository_owner}", name: "#{payload["repository"]["name"]}")
-                 mentionableUsers(last: 10) {
-                   nodes{
-                         login
-                       }
-                     }
-                   }
+           repository(owner: "#{repository_owner}", name: "#{payload["repository"]["name"]}") {
+             pullRequest(number: 1) {
+               id
+             }
+             mentionableUsers(last: 10) {
+               nodes {
+                 id
                }
              }
+           }
+         }
     QUERY
 
-    members = result["data"]["repository"]["mentionableUsers"]["nodes"].map{ |node|node["login"] }
-    members.delete(pr_owner)
+    raise result["errors"].first["message"] if result["errors"]
+
+    pr_id = result["data"]["repository"]["pull_request"]["id"]
+    member_ids = result["data"]["repository"]["mentionableUsers"]["nodes"].map{ |node|node["id"] }
+    member_ids.delete(pr_user_id)
 
     variables = {"r":
       {
-        "pullRequestId": payload["pull_request"]["id"],
-        "userIds": [mambers.sample]
+        "pullRequestId": pr_id,
+        "userIds": "[#{member_ids.sample}]"
       }
     }
-    client.query(client.parse(<<-MUTATION, variables))
+    mutation_result = http.execute(document: <<-MUTATION, variables: variables)
       mutation RequestReview($r: RequestReviewsInput!) {
         requestReviews(input: $r) {
-          pullRequest {
-            id
-          }
-          requestedReviewersEdge {
-            node {
-              login
-            }
-          }
+          clientMutationId
         }
       }
     MUTATION
+
+    raise mutation_result["errors"].first["message"] if mutation_result["errors"]
   end
 end
