@@ -16,11 +16,10 @@ module AuthenticateService
     response = http.start do |h|
       h.request(request)
     end
-
-    if response.code == 201
+    if response.code.to_i == 201
       return JSON.parse(response.body)["token"]
     else
-      return response.body
+      raise "#{response.code} #{response.body}"
     end
   end
 end
