@@ -16,7 +16,7 @@ class RandomAssignmentsController < ApplicationController
     end
     http.token = AuthenticateService.perform(payload["installation"]["id"])
 
-    pr_user_id = http.execute(<<-USER)["data"]["user"]["id"]
+    pr_user_id = graphql_http_execute(http, <<-USER)["user"]["id"]
     query {
       user(login: "#{pr_user_login}") {
         id
@@ -24,7 +24,8 @@ class RandomAssignmentsController < ApplicationController
     }
     USER
 
-    result = http.execute(document: <<-QUERY)
+    repository_owner = payload["repository"]["owner"]["login"]
+    repository_info = graphql_http_execute(http, <<-QUERY)["repository"]
          query {
            repository(owner: "#{repository_owner}", name: "#{payload["repository"]["name"]}") {
              pullRequest(number: 1) {
@@ -39,19 +40,18 @@ class RandomAssignmentsController < ApplicationController
          }
     QUERY
 
-    raise result["errors"].first["message"] if result["errors"]
-
-    pr_id = result["data"]["repository"]["pull_request"]["id"]
-    member_ids = result["data"]["repository"]["mentionableUsers"]["nodes"].map{ |node|node["id"] }
+    pr_id = repository_info["pullRequest"]["id"]
+    member_ids = repository_info["mentionableUsers"]["nodes"].map{ |node|node["id"] }
     member_ids.delete(pr_user_id)
 
-    variables = {"r":
+    mutation_variables = {"r":
       {
         "pullRequestId": pr_id,
         "userIds": "[#{member_ids.sample}]"
       }
     }
-    mutation_result = http.execute(document: <<-MUTATION, variables: variables)
+    
+    graphql_http_execute(http, <<-MUTATION, mutation_variables)
       mutation RequestReview($r: RequestReviewsInput!) {
         requestReviews(input: $r) {
           clientMutationId
@@ -59,6 +59,15 @@ class RandomAssignmentsController < ApplicationController
       }
     MUTATION
 
-    raise mutation_result["errors"].first["message"] if mutation_result["errors"]
+  end
+
+  private
+  def graphql_http_execute(http, document, variables = {})
+    response = http.execute(document: document, variables: variables)
+    if response["errors"]
+      raise response["errors"].first["message"]
+    else
+      response["data"]
+    end
   end
 end
