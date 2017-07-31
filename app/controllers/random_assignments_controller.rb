@@ -5,7 +5,7 @@ class RandomAssignmentsController < ApplicationController
 
     pr_user_login = payload["pull_request"]["user"]["login"]
     http = GraphQL::Client::HTTP.new("https://api.github.com/graphql")do
-      attr_writer :tokenid
+      attr_writer :token
 
       def headers(_context)
         {
