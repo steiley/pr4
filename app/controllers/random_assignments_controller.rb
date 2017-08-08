@@ -16,49 +16,51 @@ class RandomAssignmentsController < ApplicationController
     end
     http.token = AuthenticateService.perform(payload["installation"]["id"])
 
-    pr_user_id = graphql_http_execute(http, <<-USER)["user"]["id"]
-    query {
-      user(login: "#{pr_user_login}") {
-        id
-      }
-    }
-    USER
-
     repository_owner = payload["repository"]["owner"]["login"]
+    pr_number = payload["pull_request"]["number"]
     repository_info = graphql_http_execute(http, <<-QUERY)["repository"]
          query {
            repository(owner: "#{repository_owner}", name: "#{payload["repository"]["name"]}") {
-             pullRequest(number: 1) {
+             pullRequest(number: #{pr_number}) {
                id
              }
              mentionableUsers(last: 10) {
                nodes {
-                 id
+                 login
                }
              }
            }
          }
     QUERY
 
-    pr_id = repository_info["pullRequest"]["id"]
-    member_ids = repository_info["mentionableUsers"]["nodes"].map{ |node|node["id"] }
-    member_ids.delete(pr_user_id)
+    member_logins = repository_info["mentionableUsers"]["nodes"].map{ |node|node["login"] }
+    member_logins.delete(pr_user_login)
+    member_logins.delete("pr3-bot")
 
-    mutation_variables = {"r":
-      {
-        "pullRequestId": pr_id,
-        "userIds": "[#{member_ids.sample}]"
-      }
-    }
-    
-    graphql_http_execute(http, <<-MUTATION, mutation_variables)
-      mutation RequestReview($r: RequestReviewsInput!) {
-        requestReviews(input: $r) {
-          clientMutationId
-        }
-      }
-    MUTATION
+    conn = Faraday.new(url: "https://api.github.com/") do |faraday|
+      faraday.basic_auth("pr3-bot", IO.read("pr3-bot.key").strip)
+      faraday.response :logger, Rails.logger
+      faraday.adapter :net_http
+    end
 
+    owner_login = payload["repository"]["owner"]["login"]
+    faraday_response = conn.post do |req|
+      req.url("/repos/#{owner_login}/#{payload["repository"]["name"]}/pulls/#{pr_number}/requested_reviewers")
+
+      req.headers["Accept"] = "application/vnd.github.thor-preview+json"
+      req.body = JSON.generate({
+        reviewers: [
+          member_logins.sample
+        ]
+      }
+      )
+    end
+
+    if faraday_response.status == 201
+      render json: {status: :ok}
+    else
+      raise %Q(#{response.status}:#{response.body})
+    end
   end
 
   private
