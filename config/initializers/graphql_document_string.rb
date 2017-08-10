@@ -1,3 +1,3 @@
 class String
-  alias_method :to_query_string, :itself
+  alias to_query_string itself
 end

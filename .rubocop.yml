@@ -1,0 +1,27 @@
+Lint/NestedMethodDefinition:
+  Exclude:
+    - 'app/controllers/random_assignments_controller.rb'
+
+Metrics/AbcSize:
+  Max: 30
+  
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 20
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ModuleFunction:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
