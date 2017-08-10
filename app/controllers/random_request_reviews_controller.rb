@@ -44,7 +44,7 @@ class RandomRequestReviewsController < ApplicationController
 
   def bear_faraday_connection
     Faraday.new(url: "https://api.github.com/") do |faraday|
-      faraday.basic_auth("pr3-bot", IO.read("pr3-bot.key").strip)
+      faraday.basic_auth("pr4-bot", IO.read("pr4-bot.key").strip)
       faraday.response :logger, Rails.logger
       faraday.adapter :net_http
     end
@@ -55,7 +55,7 @@ class RandomRequestReviewsController < ApplicationController
 
     member_logins = repository_info["mentionableUsers"]["nodes"].map { |node| node["login"] }
     member_logins.delete(pr_user_login)
-    member_logins.delete("pr3-bot")
+    member_logins.delete("pr4-bot")
     member_logins.sample
   end
 
