@@ -6,10 +6,13 @@ class RandomAssignmentsController < ApplicationController
       return
     end
 
-    repository_info = get_repository_info(http)
-    response = request_reviewer(conn, payload, repository_info)
+    repository_info = get_repository_info(payload)
+    response = request_reviewer(payload, repository_info)
 
-    render json: { status: :ok } if response.status == 201
+    if response.status == 201
+      render json: { status: :ok }
+      return
+    end
 
     raise "#{response.status}:#{response.body}"
   end
@@ -17,7 +20,7 @@ class RandomAssignmentsController < ApplicationController
   private
 
   def bear_graphql_http(payload)
-    GraphQL::Client::HTTP.new("https://api.github.com/graphql") do
+    http = GraphQL::Client::HTTP.new("https://api.github.com/graphql") do
       attr_writer :token
 
       def headers(_context)
@@ -56,13 +59,13 @@ class RandomAssignmentsController < ApplicationController
     member_logins.sample
   end
 
-  def request_reviewer(conn, payload, repository_info)
+  def request_reviewer(payload, repository_info)
     owner_login = payload["repository"]["owner"]["login"]
 
     conn = bear_faraday_connection
     conn.post do |req|
       req.url(
-        %(/repos/#{owner_login}/#{payload["repository"]["name"]}/pulls/#{pr_number(payload)}/requested_reviewers")
+        %(/repos/#{owner_login}/#{payload["repository"]["name"]}/pulls/#{pr_number(payload)}/requested_reviewers)
       )
 
       req.headers["Accept"] = "application/vnd.github.thor-preview+json"
@@ -70,7 +73,7 @@ class RandomAssignmentsController < ApplicationController
     end
   end
 
-  def get_repository_info(http, payload)
+  def get_repository_info(payload)
     http = bear_graphql_http(payload)
 
     repository_owner = payload["repository"]["owner"]["login"]
