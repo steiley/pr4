@@ -1,4 +1,4 @@
-class RandomAssignmentsController < ApplicationController
+class RandomRequestReviewsController < ApplicationController
   def create
     payload = JSON.parse(request.body.read)
     unless payload["action"] == "opened"
