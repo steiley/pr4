@@ -1,7 +1,10 @@
 class RandomAssignmentsController < ApplicationController
   def create
     payload = JSON.parse(request.body.read)
-    head :success unless %w(open reopen).include?(payload["action"])
+    unless payload["action"] == "opened"
+      head :success
+      return
+    end
 
     pr_user_login = payload["pull_request"]["user"]["login"]
     http = GraphQL::Client::HTTP.new("https://api.github.com/graphql")do
