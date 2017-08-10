@@ -7,6 +7,7 @@ module GenerateGithubAppsJwtService
   end
 
   private
+
   def payload
     {
       # issued at time

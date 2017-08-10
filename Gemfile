@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 gem "rails"
 
@@ -9,4 +9,8 @@ gem "tzinfo-data"
 
 group :development do
   gem "listen"
+end
+
+group :development, :test do
+  gem "rubocop"
 end
