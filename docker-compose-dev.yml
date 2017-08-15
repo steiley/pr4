@@ -1,10 +1,10 @@
 version: '2'
 
 volumes:
-  pan_src:
+  gha_src:
     external: true
 
 services:
   web:
     volumes:
-      - pan_src:/app:rw
+      - gha_src:/app:rw

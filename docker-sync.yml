@@ -1,13 +1,13 @@
 version: '2'
 
 syncs:
-  pan_src:
+  gha_src:
     src: .
     volumes:
       - .:/app
     sync_strategy: native_osx
     sync_args: ["-prefer newer", "-copyonconflict"]
-    sync_excludes: &pan_src_excludes
+    sync_excludes: &gha_src_excludes
       - ".git"
       - "log"
-    watch_excludes: *pan_src_excludes
+    watch_excludes: *gha_src_excludes
