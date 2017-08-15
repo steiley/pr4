@@ -5,6 +5,7 @@ gem "rails"
 gem "faraday"
 gem "graphql-client"
 gem "jwt"
+gem "puma"
 gem "tzinfo-data"
 
 group :development do
