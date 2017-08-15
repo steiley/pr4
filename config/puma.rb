@@ -1,5 +1,5 @@
-port        ENV.fetch("PORT") { 3500 } 
-daemonize true
+port        ENV.fetch("PORT") { 3500 }
+daemonize false
 state_path 'tmp/pids/puma.state'
 pidfile 'tmp/pids/puma.pid'
 threads 0,16
