@@ -2,7 +2,7 @@ class RandomRequestReviewsController < ApplicationController
   def create
     payload = JSON.parse(request.body.read)
     unless payload["action"] == "opened"
-      head :success
+      head 204
       return
     end
 
@@ -10,7 +10,7 @@ class RandomRequestReviewsController < ApplicationController
     response = request_reviewer(payload, repository_info)
 
     if response.status == 201
-      render json: { status: :ok }
+      head 201
       return
     end
 
