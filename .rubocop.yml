@@ -1,6 +1,18 @@
+Layout/ExtraSpacing:
+  Exclude:
+    - 'config/puma.rb'
+
+Layout/SpaceAfterComma:
+  Exclude:
+    - 'config/puma.rb'
+
+Layout/SpaceBeforeFirstArg:
+  Exclude:
+    - 'config/puma.rb'
+
 Lint/NestedMethodDefinition:
   Exclude:
-    - 'app/controllers/random_assignments_controller.rb'
+    - 'app/controllers/random_request_reviews_controller.rb'
 
 Metrics/AbcSize:
   Max: 30
