@@ -27,3 +27,12 @@ build:
         - script:
             name: rubocop
             code: bundle exec rubocop
+deploy:
+  steps:
+    - heroku-deploy:
+        key: $HEROKU_KEY
+        user: $HEROKU_USER
+        app-name: $HEROKU_APP_NAME
+    - script:
+      name:
+      code: heroku container:push web
