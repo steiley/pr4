@@ -1,0 +1,8 @@
+install:
+  - set PATH=C:\Ruby24-x64\bin;%PATH%
+  - bundle install
+
+build: off
+
+test_script:
+  - bundle exec rubocop
