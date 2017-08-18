@@ -44,7 +44,7 @@ class RandomRequestReviewsController < ApplicationController
 
   def bear_faraday_connection
     Faraday.new(url: "https://api.github.com/") do |faraday|
-      faraday.basic_auth("pr4-bot", IO.read("pr4-bot.key").strip)
+      faraday.basic_auth("pr4-bot", ENV["PR4_BOT_KEY"])
       faraday.response :logger, Rails.logger
       faraday.adapter :net_http
     end

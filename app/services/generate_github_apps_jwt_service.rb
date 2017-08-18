@@ -1,7 +1,7 @@
 module GenerateGithubAppsJwtService
   extend self
   def perform
-    private_pem = File.read(Rails.root.join("assigned-notifier.pem"))
+    private_pem = ENV["PRIVATE_PEM"]
     private_key = OpenSSL::PKey::RSA.new(private_pem)
     JWT.encode(payload, private_key, "RS256")
   end
