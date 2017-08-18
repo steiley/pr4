@@ -14,4 +14,8 @@ services:
     ports:
       - "3500:3500"
 
+    environment:
+      - PR4_BOT_KEY=${PR4_BOT_KEY}
+      - PRIVATE_PEM=${PRIVATE_PEM}
+
     command: puma -C config/puma.rb
