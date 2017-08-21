@@ -41,3 +41,17 @@ jobs:
           name: run tests
           command: |
             bundle exec rubocop
+
+      - run: bash .circleci/setup-heroku.sh
+      - add_ssh_keys:
+          fingerprints:
+            - "40:d6:87:4f:1c:c5:72:e8:eb:7f:46:d9:58:9c:14:82"
+
+      - deploy:
+          name: Deploy Master to Heroku
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              git push heroku master
+              heroku run bundle exec puma -C config/puma.rb
+              heroku restart
+            fi
