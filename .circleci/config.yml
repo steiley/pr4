@@ -51,7 +51,7 @@ jobs:
           name: Deploy Master to Heroku
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              git push git@heroku.com:steiley-gha master
+              git push git@git.heroku.com:steiley-gha master
               heroku run bundle exec puma -C config/puma.rb
               heroku restart
             fi
