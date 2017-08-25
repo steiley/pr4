@@ -50,6 +50,4 @@ jobs:
             chmod 600 ~/.ssh/known_hosts
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               git push git@heroku.com:steiley-gha.git master
-              heroku run bundle exec puma -C config/puma.rb
-              heroku restart
             fi
