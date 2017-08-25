@@ -9,6 +9,5 @@ machine git.heroku.com
 EOF
 
 # Add heroku.com to the list of known hosts
-ls ~/.ssh
 ssh-keygen -f "/home/circleci/.ssh/known_hosts" -R heroku.com
 ssh-keyscan -H heroku.com >> ~/.ssh/known_hosts
