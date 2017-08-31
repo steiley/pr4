@@ -12,7 +12,7 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
-
+!/tmp/pids
 .byebug_history
 
 \.ruby-version
