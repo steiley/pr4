@@ -1,24 +1,8 @@
-# README
+# pr4(Pull Request Random Request Reviewer)
+*pr4* requests a GitHub pill request to a reviewer who is randomly slelected from the mentionable users of the repository.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# Install
+1. [Install and authorize from thjis link](https://github.com/apps/pr4)
+2. Visit your epository setting page.
+3. Click colloborator from side menu.
+4. Type pr4-bot to textbox, click [Add colloborator] button, so pr4-bot is added in your repository colloborator.
