@@ -3,6 +3,6 @@
 
 # Install
 1. [Install and authorize from thjis link](https://github.com/apps/pr4)
-2. Visit your epository setting page.
+2. Visit your repository setting page.
 3. Click colloborator from side menu.
 4. Type pr4-bot to textbox, click [Add colloborator] button, so pr4-bot is added in your repository colloborator.
