@@ -16,6 +16,6 @@
 /tmp/pids/*
 !/tmp/pids/.keep
 
-!.byebug_history
+.byebug_history
 
 \.ruby-version
