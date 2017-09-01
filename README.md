@@ -1,5 +1,5 @@
 # pr4(Pull Request Random Request Reviewer)
-*pr4* requests a GitHub pill request to a reviewer who is randomly slelected from the mentionable users of the repository.
+**pr4** requests a GitHub pill request to a reviewer who is randomly slelected from the mentionable users of the repository.
 
 # Install
 1. [Install and authorize from thjis link](https://github.com/apps/pr4)
